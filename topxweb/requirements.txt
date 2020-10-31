@@ -1,0 +1,8 @@
+django
+gunicorn
+django-heroku
+PyMySQL
+django-widget-tweaks
+scikit-fuzzy
+nltk
+BeautifulSoup4

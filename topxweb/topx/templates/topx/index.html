@@ -1,0 +1,146 @@
+﻿{% load static %}
+<html>
+	<head>
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+		<title>TOP(X)</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+		<header  class="page-header">
+            <h1><code><a href="/topx">TOP(X)</a></code></h1>
+        </header>
+        <div class="pesquisa">
+	        <div class =="input-group input-group-lg" >
+				<form action="/topx/" method="post">
+				    {% csrf_token %}
+				    <div class="col-lg-7">
+					    <div class="input-group input-group-lg card-shadow">
+						  <span class="input-group-addon" id="sizing-addon1">URL</span>
+						  <input type="text" class="form-control" placeholder="Digite a url do produto..." aria-describedby="sizing-addon1" name="url-comment" value="{{url}}">
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="input-group input-group-lg card-shadow">
+						  <span class="input-group-addon" id="sizing-addon1">TOP(X)</span>
+						  <input type="number" class="form-control" placeholder="" aria-describedby="sizing-addon3" name="topx"  min = "1", step="1" value="{{topx}}">
+						</div>
+					</div>
+				    <button type="submit" class="btn btn-default my-btn card-shadow">PESQUISAR</button>
+				</form>
+			</div>
+			{% if topComment %}
+			{% else %}
+			  <ol>
+			  	<li><p>Vá ao site <a href = "https://www.buscape.com.br">buscapé.com.br</a>, pesquise por um produto e selecione-o.</p></li>
+			  	<li><p>Clique em Avaliações dos Consumidores.</p></li>
+			  	<li><p>Cole o link acima e, no campo TOP(X), escolha quantos comentários dos mais importantes você deseja que apareça </p></li>
+			  </ol>
+			{% endif %}
+		</div>
+
+		<div class="infoMarcaProduto">
+			{% if prod %}
+				<div class="produto compra card">
+					<div class="nome-produto">
+						<h3>{{nomeProduto}}</h3>
+					</div>
+					<div class="interiorProduto">
+						<div class="img-produto">
+							<img src={{prod.url_imagem}} alt={{nomeProduto}}>
+						</div>
+						<div class="info-produto">
+							<p class="preco">{{prod.preco}}</p>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+
+			{%if marcaInfo%}
+				<div class="produto marca card">
+					<div class="nome-produto">
+						<h3><a href={{marcaInfo.url_marca}}>{{marcaInfo.nome}}</a> - <a href={{marcaInfo.url_reclame_aqui}}>Reclame Aqui</a></h3>
+					</div>
+					<div class="block-container">
+						{% if marcaInfo.recomendacao == "Ótimo" %}
+						<h3><span class="label label-success">{{marcaInfo.recomendacao}}</span></h3>
+					{% endif %}
+
+					{% if marcaInfo.recomendacao == "Bom" %}
+						<h3><span class="label label-info">{{marcaInfo.recomendacao}}</span></h3>
+					{% endif %}
+
+					{% if marcaInfo.recomendacao == "regular" %}
+						<h3><span class="label label-warning">{{marcaInfo.recomendacao}}</span></h3>
+					{% endif %}
+
+					{% if marcaInfo.recomendacao == "Ruim" %}
+						<h3><span class="label label-warning">{{marcaInfo.recomendacao}}</span></h3>
+					{% endif %}
+
+					{% if marcaInfo.recomendacao == "Não recomendada" %}
+						<h3><span class="label label-danger">{{marcaInfo.recomendacao}}</span></h3>
+					{% endif %}
+					</div>
+					<div class="block-container">
+						<div class="divInline">
+							<p><span class=" reclamacoes green-text">{{marcaInfo.pct_atendidas}}%</span><br>Reclamações atendidas</p>
+							<p><span class=" reclamacoes green-text">{{marcaInfo.volta_negocio}}%</span><br>Voltaria a fazer negócio</p>
+							<p><span class=" reclamacoes green-text"> {{marcaInfo.indice_solucao}}%</span><br>Índice de solução</p>
+						</div>
+						<div class="divInline divCentral">
+							<p><span class=" reclamacoes red-text">{{marcaInfo.num_reclamacoes}}</span><br>reclamações</p>
+							<p><span class=" reclamacoes green-text">{{marcaInfo.num_atendidas}}</span><br>atendidas</p>
+							<p><span class=" reclamacoes red-text"> {{marcaInfo.num_nao_atendidas}}</span><br>não atendidas</p>
+						</div>
+						<div class="divInline">
+							<p><span class=" reclamacoes green-text">{{marcaInfo.tempo_resposta}}</span><br>Tempo de resposta </p>
+							<p><span class=" reclamacoes green-text">{{marcaInfo.nota_consumidor}}</span><br>Nota do consumidor</p>
+							<p><span class=" reclamacoes green-text"> {{marcaInfo.num_avaliacoes}}</span><br>Avaliações</p>
+						</div>
+
+					</div>
+					
+				</div>
+			{% endif %}
+
+			{% if prod.url_youtube %}
+				<div class="produto card">
+					<div class="nome-produto">
+						<h3>{{nomeProduto}} - Youtube</h3>
+					</div>
+					<div class="produto-youtube">
+						<iframe class='frame-video' src={{prod.url_youtube}} frameborder="0" allowfullscreen></iframe>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		
+		{% if topComment %}
+
+		<div class="comentarios">
+			<h3>Comentários</h3>
+			{% for comment in topComment %}
+			{% if comment.polaridade == "positivo"%}
+				<div class="comentario card positivo">
+			{% endif %}
+			{% if comment.polaridade == "negativo" %}
+				<div class="comentario card negativo">
+			{% endif %}
+			{% if comment.polaridade == "neutro"%}
+				<div class="comentario card neutro">
+			{% endif %}
+				<h4>{{comment.autor}}</h4>
+				<p>{{comment.comentario}}</p>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+
+		</div>
+
+	</body>
+
+</html>
